@@ -1,0 +1,33 @@
+specVersion: 0.0.2
+description: Million Pixels
+repository: https://github.com/graphprotocol/example-subgraph
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Pixels
+    network: matic
+    source:
+      address: "0xeF70BbeD09AF262148A5D08Eaca559F1106152D7"
+      abi: Pixels
+      startBlock: 11389980
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Pixel
+        - User
+      abis:
+        - name: Pixels
+          file: Pixels/abis/Pixels.json
+      eventHandlers:
+        - event: BuyPixel(indexed address,uint256,uint256)
+          handler: handleBuyPixel
+        - event: ColorPixel(uint256,uint256)
+          handler: handleColorPixel
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: TextUpdate(indexed address,string)
+          handler: handleTextUpdate
+      file: Pixels/Pixels.wasm

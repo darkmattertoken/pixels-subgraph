@@ -1,0 +1,11 @@
+type Pixel @entity {
+  id: ID!
+  owner: Bytes!
+  color: String!
+  lastChangeBlock: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  text: String
+}
