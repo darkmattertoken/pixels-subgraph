@@ -9,3 +9,18 @@ type User @entity {
   id: ID!
   text: String
 }
+
+type DayData @entity {
+  id: ID!
+  date: Int!
+  dailyPixelsBought: Int!
+  totalPixelsBought: Int!
+  dailyETH: BigDecimal!
+  totalETH: BigDecimal!
+}
+
+type OverallData @entity {
+  id: ID!
+  totalPixelsBought: Int!
+  totalETH: BigDecimal!
+}
