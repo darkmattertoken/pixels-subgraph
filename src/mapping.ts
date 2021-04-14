@@ -1,5 +1,8 @@
+import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts'
 import { BuyPixel, Transfer, ColorPixel, TextUpdate } from '../generated/Pixels/Pixels'
-import { Pixel, User } from '../generated/schema'
+import { DayData, OverallData, Pixel, User } from '../generated/schema'
+
+let PIXEL_PRICE = BigDecimal.fromString('0.001');
 
 export function handleBuyPixel(event: BuyPixel): void {
   let pixel = new Pixel(event.params._id.toString())
@@ -7,6 +10,34 @@ export function handleBuyPixel(event: BuyPixel): void {
   pixel.color = "#" + event.params._color.toHex().slice(2).padStart(6, '0')
   pixel.lastChangeBlock = event.block.number;
   pixel.save()
+
+  let stats = OverallData.load('0');
+  if (!stats) {
+    stats = new OverallData('0')
+    stats.totalPixelsBought = 0;
+    stats.totalETH = BigDecimal.fromString('0')
+  }
+
+  stats.totalPixelsBought++;
+  stats.totalETH = stats.totalETH.plus(PIXEL_PRICE)
+  stats.save()
+
+  let timestamp = event.block.timestamp.toI32()
+  let dayID = timestamp / 86400
+  let dayStartTimestamp = dayID * 86400
+  let day = DayData.load(dayID.toString());
+  if (!day) {
+    day = new DayData(dayID.toString());
+    day.dailyPixelsBought = 0
+    day.date = dayStartTimestamp;
+    day.dailyETH = BigDecimal.fromString('0')
+    day.totalETH = BigDecimal.fromString('0')
+  }
+  day.dailyPixelsBought++;
+  day.dailyETH = day.dailyETH.plus(PIXEL_PRICE)
+  day.totalETH = stats.totalETH;
+  day.totalPixelsBought = stats.totalPixelsBought;
+  day.save();
 }
 
 export function handleColorPixel(event: ColorPixel): void {

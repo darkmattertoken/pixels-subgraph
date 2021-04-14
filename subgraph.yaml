@@ -18,6 +18,8 @@ dataSources:
       entities:
         - Pixel
         - User
+        - DayData
+        - OverallData
       abis:
         - name: Pixels
           file: ./abis/Pixels.json
